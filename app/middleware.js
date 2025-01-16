@@ -1,6 +1,7 @@
 const bodyParser = require('body-parser');
 const path = require('path')
 const favicon = require('serve-favicon');
+const cors = require("cors")
 
 class Middleware {
   constructor(express) {
@@ -11,7 +12,7 @@ class Middleware {
     this.express.use(bodyParser.json());
     this.express.use(bodyParser.urlencoded({ extended: false }));
     this.express.use(favicon(path.join(__dirname, '..', 'public', 'favicon.png')));
-
+    this.express.use(cors())
     this.initErrors()
   }
 
