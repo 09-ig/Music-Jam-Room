@@ -28,22 +28,19 @@ passport.use(new SpotifyStrategy({
 }));
 
 app.get("/", (req, res) => {
-    //send landing page
+    //Ishita: send landing page (check frontend directory)
 });
 
 app.get("/dashboard", (req, res) => {
-    //send dashboard page
-});
-
-app.get("/dashboard", (req, res) => {
-    //send dashboard page
+    //Ishita: send dashboard page
 });
 
 
-//Spotify auth page
 app.get(
     '/auth/spotify',
     passport.authenticate('spotify', {
+        //Siddhi: add scope as discussed in meeting
+        //https://developer.spotify.com/documentation/web-api/concepts/scopes#user-modify-playback-state
         scope: ['user-read-email', 'user-read-private']
     })
 );
