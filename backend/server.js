@@ -44,13 +44,14 @@ passport.use(new SpotifyStrategy({
 }));
 
 app.get("/", (req, res) => {
-    //TODO: (Ishita) send landing page (check frontend directory)
+    // TODO: (Ishita) send landing page (check frontend directory)
 });
 
 app.get("/dashboard", (req, res) => {
-    //TODO: (Ishita) send dashboard page
+    // TODO: (Ishita) send dashboard page
 });
 
+// TODO: Connect socket.io to client
 
 app.get(
     '/auth/spotify',
