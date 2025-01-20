@@ -4,6 +4,8 @@ import env from "dotenv"; // env
 import passport from "passport"; // for auth
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import session from "express-session"; // session handling
+import { dirname } from 'path';
+import { fileURLToPath } from 'url';
 
 // Load env
 env.config({
@@ -16,6 +18,8 @@ if (!process.env.SESSION_SECRET) {
 }
 
 // TODO: (Ishita) implement mongodb as session-store
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 const app = express();
 const port = process.env.APP_PORT || 3000;
 
@@ -54,6 +58,7 @@ app.get("/", (req, res) => {
 
 app.get("/dashboard", (req, res) => {
     res.send("Dashboard page"); // Placeholder response
+    // TODO: (Rehmatjot) Render the corresponding pages in frontend directory
 });
 
 // TODO: (Ishita) Connect socket.io to client
