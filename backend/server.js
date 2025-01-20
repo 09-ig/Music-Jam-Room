@@ -2,66 +2,72 @@ import express from "express";
 import cors from "cors"; // for api
 import env from "dotenv"; // env
 import passport from "passport"; // for auth
-import {Strategy as SpotifyStrategy} from "passport-spotify";
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import session from "express-session"; // session handling
 
-//TODO: (Ishita) implement mongodb as session-store
+// Load env
+env.config({
+    path: "../envs/.env"
+});
 
+// Ensure SESSION_SECRET is defined
+if (!process.env.SESSION_SECRET) {
+    throw new Error("SESSION_SECRET is not defined in environment variables.");
+}
+
+// TODO: (Ishita) implement mongodb as session-store
 const app = express();
 const port = process.env.APP_PORT || 3000;
 
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
-//for api
+// for api
 app.use(cors());
 
 app.use(session({
-    secret: process.env.SESSION_SECRET,  // Replace with a secure key
+    secret: process.env.SESSION_SECRET,  // Ensure a secure key
     resave: false,
     saveUninitialized: false,
     // TODO: (Ishita) Use Mongodb for session store here
 }));
 
-// TODO: (Rehmatjot) Get passportjs auth working
+// Initialize passport and session handling
 app.use(passport.initialize());
 app.use(passport.session());
 
-//env file is in repo root
-env.config({
-    path: "../.env"
-})
-
-//spotify auth strategy middleware
-passport.use(new SpotifyStrategy({
-    clientID: process.env.SPOTFIY_CLIENT_ID,
-    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-    callbackURL: `${process.env.APPURL}/auth/spotify/callback`
-}, function (accessToken, refreshToken, expires_in, profile, done) {
-    User.findOrCreate({spotifyId: profile.id}, function (err, user) {
-        return done(err, user);
-    });
-}));
+// Google auth strategy middleware
+passport.use(new GoogleStrategy({
+        clientID: process.env.GOOGLE_CLIENT_ID,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        callbackURL: `${process.env.APPURL}/auth/google/callback`
+    },
+    function (accessToken, refreshToken, profile, cb) {
+        User.findOrCreate({ googleId: profile.id }, function (err, user) {
+            return cb(err, user);
+        });
+    }));
 
 app.get("/", (req, res) => {
-    // TODO: (Ishita) send landing page (check frontend directory)
+    res.sendFile(__dirname + '/public/index.html'); // Example for sending a file
 });
 
 app.get("/dashboard", (req, res) => {
-    // TODO: (Ishita) send dashboard page
+    res.send("Dashboard page"); // Placeholder response
 });
 
-// TODO: Connect socket.io to client
+// TODO: (Ishita) Connect socket.io to client
 
-app.get(
-    '/auth/spotify',
-    passport.authenticate('spotify', {
-        //https://developer.spotify.com/documentation/web-api/concepts/scopes#user-modify-playback-state
-        scope: ['user-read-email', 'user-read-private']
-    })
-);
+app.get('/auth/google',
+    passport.authenticate('google', { scope: ['profile'] }));
 
-// TODO: (Rehmatjot) Add spotify callback endpoint get and set success and failiure redirect
+app.get('/auth/google/callback',
+    passport.authenticate('google', { failureRedirect: '/login' }),
+    function (req, res) {
+        // Successful authentication, redirect home.
+        res.redirect('/dashboard');
+        console.log("Login successful: ", req.user);
+    });
 
 passport.serializeUser((user, done) => {
     done(null, user.id);  // Serialize user by their ID
@@ -72,7 +78,6 @@ passport.deserializeUser((id, done) => {
         done(err, user);
     });
 });
-
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
