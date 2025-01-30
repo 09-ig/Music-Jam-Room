@@ -4,7 +4,7 @@ import env from "dotenv"; // env
 import passport from "passport"; // for auth
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import session from "express-session"; // session handling
-import { dirname } from 'path';
+import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 // Load env
@@ -21,12 +21,10 @@ if (!process.env.SESSION_SECRET) {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const app = express();
-const port = process.env.APP_PORT || 3000;
+const port = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
-// for api
 app.use(cors());
 
 app.use(session({
@@ -74,6 +72,11 @@ app.get('/auth/google/callback',
         console.log("Login successful: ", req.user);
     });
 
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, ""))
+})
+
+
 passport.serializeUser((user, done) => {
     done(null, user.id);  // Serialize user by their ID
 });
@@ -86,4 +89,5 @@ passport.deserializeUser((id, done) => {
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
+    console.log();
 });
