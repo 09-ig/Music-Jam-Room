@@ -112,15 +112,18 @@ export function RoomClient({ roomId, user }: RoomClientProps) {
           <Input
             type="text"
             placeholder="Search for a song..."
-            className="pl-4 pr-10 py-2 w-full"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyPress={(e) => e.key === "Enter" && handleSearch()}
           />
-          <Search
-            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2"
             onClick={handleSearch}
-          />
+          >
+            <Search className="h-4 w-4" />
+          </Button>
         </div>
 
         {/* Search Results */}
