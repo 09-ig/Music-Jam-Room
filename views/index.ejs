@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Jam</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<h1>Music Queue App</h1>
+
+<div>
+    <input type="text" id="searchQuery" placeholder="Search for a song">
+    <button onclick="searchSongs()">Search</button>
+</div>
+
+<ul id="searchResults"></ul>
+
+<h2>Song Queue</h2>
+<ul id="queue"></ul>
+
+<h2>Now Playing</h2>
+<iframe id="youtubePlayer" width="560" height="315" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+
+<script src="/client.js"></script>
+</body>
+</html>
