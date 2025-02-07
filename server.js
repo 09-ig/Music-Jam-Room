@@ -1,13 +1,13 @@
 import express from "express";
 import { createServer } from "http";
-import { Server } from "ws";
+import { WebSocketServer } from "ws"; // ✅ Fixed import
 import dotenv from "dotenv";
 import cors from "cors";
 
 dotenv.config();
 const app = express();
 const server = createServer(app);
-const wss = new Server({ server });
+const wss = new WebSocketServer({ server });
 
 app.use(cors());
 app.use(express.json());
@@ -47,7 +47,7 @@ wss.on("connection", (ws) => {
 // Broadcast function
 const broadcast = (message) => {
     wss.clients.forEach((client) => {
-        if (client.readyState === client.OPEN) {
+        if (client.readyState === WebSocket.OPEN) {
             client.send(JSON.stringify(message));
         }
     });
